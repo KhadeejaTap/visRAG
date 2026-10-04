@@ -1,0 +1,38 @@
+{
+  "format_on_save": "on",
+  "tab_size": 4,
+  "hard_tabs": false,
+  "languages": {
+    "Python": {
+      "tab_size": 4,
+      "formatter": {
+        "external": {
+          "command": "/home/khadeeja/.local/bin/black",
+          "arguments": ["-", "--quiet"]
+        }
+      }
+    }
+  },
+  "lsp": {
+    "pyright": {
+      "settings": {
+        "python": {
+          "pythonPath": "/usr/bin/python3"
+        }
+      }
+    },
+    "basedpyright": {
+      "settings": {
+        "basedpyright": {
+          "analysis": {
+            "autoImportCompletions": true,
+            "indexing": true
+          }
+        },
+        "python": {
+          "pythonPath": "/usr/bin/python3"
+        }
+      }
+    }
+  }
+}

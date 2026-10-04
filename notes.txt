@@ -1,0 +1,6 @@
+learning notes -
+from pathlib import path
+filepath = Path(__file__).resolve() which gives the full path , do .parent for dir
+snake case for vars, functs, methods
+PascalCase for classes
+UPPER_SNAKE for constants
