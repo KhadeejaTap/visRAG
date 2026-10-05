@@ -12,27 +12,5 @@
         }
       }
     }
-  },
-  "lsp": {
-    "pyright": {
-      "settings": {
-        "python": {
-          "pythonPath": "/usr/bin/python3"
-        }
-      }
-    },
-    "basedpyright": {
-      "settings": {
-        "basedpyright": {
-          "analysis": {
-            "autoImportCompletions": true,
-            "indexing": true
-          }
-        },
-        "python": {
-          "pythonPath": "/usr/bin/python3"
-        }
-      }
-    }
   }
 }
