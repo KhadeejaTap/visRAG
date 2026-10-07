@@ -7,8 +7,8 @@
       "tab_size": 4,
       "formatter": {
         "external": {
-          "command": "/home/khadeeja/.local/bin/black",
-          "arguments": ["-", "--quiet"]
+          "command": "/home/khadeeja/.local/bin/autopep8",
+          "arguments": ["-"]
         }
       }
     }

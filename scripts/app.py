@@ -6,7 +6,14 @@ import gradio as gr
 import torch
 
 # Import the helper functions you already wrote!
-from main import PROJECT_HOME, get_embeddings, load_model, embed_text, embed_image_single, get_label_for_image
+from main import (
+    PROJECT_HOME,
+    embed_image,
+    embed_text,
+    get_embeddings,
+    get_label_for_image,
+    load_model,
+)
 from PIL import Image
 
 parser = argparse.ArgumentParser(description="Gradio Search Engine")
@@ -36,29 +43,29 @@ print("Ready! Starting web server...")
 
 def predict(uploaded_image, search_text):
     """This runs every time a user clicks search in the UI"""
-    
+
     has_text = bool(search_text and search_text.strip())
     has_image = bool(uploaded_image is not None)
-    
+
     if has_text and model_name != "siglip":
         raise gr.Error("Text search only works if you booted with --model siglip!")
-        
+
     if has_text and has_image:
         # --- HYBRID SEARCH (BOTH) ---
         # 50/50 average of the text and image embeddings
-        img_emb = embed_image_single(processor, model, uploaded_image)
+        img_emb = embed_image(processor, model, uploaded_image)
         txt_emb = embed_text(processor, model, search_text.strip())
         emb = (img_emb + txt_emb) / 2
         emb = emb / emb.norm(dim=-1, keepdim=True)
-        
+
     elif has_text:
         # --- TEXT ONLY ---
         emb = embed_text(processor, model, search_text.strip())
-        
+
     elif has_image:
         # --- IMAGE ONLY ---
-        emb = embed_image_single(processor, model, uploaded_image)
-        
+        emb = embed_image(processor, model, uploaded_image)
+
     else:
         # User didn't provide anything!
         return []
@@ -75,7 +82,7 @@ def predict(uploaded_image, search_text):
     gallery_items = []
     for rank, idx in enumerate(top_indices):
         path = catalog_paths[idx]
-        label = get_label_for_image(path)
+        label = get_label_for_image(datadir, path)
         caption = f"Rank {rank + 1} ({label})"
         gallery_items.append((path, caption))
 
@@ -84,12 +91,17 @@ def predict(uploaded_image, search_text):
 
 # --- Define the User Interface ---
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    gr.Markdown("# 🔍 Visual Search Engine")
-    gr.Markdown("Upload an image, type a description, or do BOTH to search the catalog!")
+    gr.Markdown("Visual Search Engine")
+    gr.Markdown(
+        "Upload an image, type a description, or do BOTH to search the catalog!"
+    )
 
     with gr.Row():
         with gr.Column(scale=1):
-            input_text = gr.Textbox(label="Search by Text (SigLIP only)", placeholder="e.g. 'a rusted red valve'")
+            input_text = gr.Textbox(
+                label="Search by Text (SigLIP only)",
+                placeholder="e.g. 'a rusted red valve'",
+            )
             input_image = gr.Image(type="pil", label="...and/or Upload Query Image")
             search_button = gr.Button("Search", variant="primary")
 
@@ -103,9 +115,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
     # Wire the button to the function
     search_button.click(
-        fn=predict, 
-        inputs=[input_image, input_text], 
-        outputs=output_gallery
+        fn=predict, inputs=[input_image, input_text], outputs=output_gallery
     )
 
 if __name__ == "__main__":
